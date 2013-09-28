@@ -16,7 +16,10 @@ $tConf = $config['twitter'];
 
 $t = new TwitterUtil($tConf['consumer_key'], $tConf['consumer_secret'], $tConf['oauth_token'], $tConf['oauth_token_secret']);
 
-$query = '#BreakingBadMarathon';
+$thing = Tweet::GetByQuery('#BreakingBadMarathon');
+print_r($thing);
+
+/*$query = '#BreakingBadMarathon';
 $response = $t->Search($query);
 
 $tweets = array();
@@ -31,4 +34,4 @@ $queryObj->Upsert($db, $queryObj);
 
 $relObj = new TweetQueryTweet($query);
 $relObj->BatchUpsert($db, $response->statuses);
-
+ */

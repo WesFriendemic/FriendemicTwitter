@@ -3,6 +3,7 @@
 namespace Wes\Model;
 
 use Wes\Logger;
+use Wes\Db\Db;
 
 /*
  * Almost like an ultra simplified ORM base class. Generates inserts, updates, selects from
@@ -47,12 +48,12 @@ abstract class ModelBase {
     /*
      * Used to distinguish between an update and an insert
      */
-    protected function PrepareSelectQuery(\PDO $db) {
+    protected function PrepareSelectQuery(\PDO $db, $allFields=false) {
         $table = static::$table;
 
         $fieldClause = implode(",", array_map(function($field) {
             return "`$field`";
-        }, static::$primaryKey));
+        }, $allFields ? static::$dbFields : static::$primaryKey));
 
         $whereClause = implode(" and ", array_map(function($field) {
             return "`$field` = :$field";
@@ -179,7 +180,8 @@ abstract class ModelBase {
      *
      * @param $db PDO Open connection to the database
      */
-    public function BatchUpsert(\PDO $db, $objs) {
+    public function BatchUpsert($objs) {
+        $db = Db::GetInstance();
         $selectQuery = $this->PrepareSelectQuery($db);
         $insertQuery = $this->PrepareInsertQuery($db);
         $updateQuery = $this->PrepareUpdateQuery($db);
@@ -187,5 +189,27 @@ abstract class ModelBase {
         foreach($objs as $obj) {
             $this->Upsert($db, $obj, $selectQuery, $insertQuery, $updateQuery);
         }
+    }
+
+    protected static function ParseFromRow($row) {
+        $class = get_called_class();
+        $obj = new $class();
+
+        foreach(static::$dbFields as $field) {
+            $obj->$field = $row[$field];
+        }
+
+        return $obj;
+    }
+
+    public static function Get($idValues) {
+        $db = Db::GetInstance();
+        $selectQuery = static::PrepareSelectQuery($db, true);
+        $selectQuery->execute($idValues);
+
+        $row = $selectQuery->fetch(\PDO::FETCH_ASSOC);
+        if(empty($row)) return null;
+
+        return static::ParseFromRow($row);
     }
 }
