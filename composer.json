@@ -1,0 +1,17 @@
+{
+    "name": "wes/friendemic-twitter",
+    "authors": [
+        {
+            "name": "Wesley Curtis",
+            "email": "wesley.curtis@fayebsg.com"
+        }
+    ],
+    "require": {
+        "abraham/twitteroauth": "dev-add-composer-json"
+    },
+    "autoload": {
+        "psr-0": {
+            "Wes": "lib/"
+        }
+    }
+}
