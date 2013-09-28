@@ -63,7 +63,7 @@ abstract class ParserBase {
         return isset($obj->$key) ? $obj->$key : null;
     }
 
-    protected static function ResolveComplex($obj, $spec) {
+    protected static function ResolveComplex($obj, $spec, $fieldName, $seed) {
         $resolvedVal = null;
         if(isset($spec['field'])) {
            if(is_array($spec['field'])) {
@@ -74,13 +74,18 @@ abstract class ParserBase {
            }
         }
         if(isset($spec['type'])) {
-            $resolvedVal = static::ParseValue($spec['type'], $resolvedVal);
+            if($spec['type'] !== 'virtual') {
+                $resolvedVal = static::ParseValue($spec['type'], $resolvedVal);
+            } else {
+                $resolvedVal = $seed->$fieldName;
+            }
         }
 
         return $resolvedVal;
     }
 
     public static function ParseFromJsonObj($json, $seed) {
+        Logger::error("incoming object: " . print_r($seed, true));
         foreach(static::$parseFields as $key => $value) {
             // Integer key means simple array element
             if(is_int($key)) {
@@ -97,7 +102,7 @@ abstract class ParserBase {
             }
 
             if(is_array($value)) {
-                $seed->$fieldName = static::ResolveComplex($json, $value);
+                $seed->$fieldName = static::ResolveComplex($json, $value, $fieldName, $seed);
             }
         }
         return $seed;

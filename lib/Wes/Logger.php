@@ -10,7 +10,7 @@ class Logger {
 
     protected static $LogWriter;
 
-    protected static $level = self::FATAL;
+    protected static $level = self::ERROR;
 
     public static function SetLevel($level) {
         self::$level = $level;

@@ -23,6 +23,7 @@ abstract class ModelBase {
      * Woo hoo for late static binding!
      */
     protected static $dbFields;
+    protected static $autoIncrement = false;
     protected static $primaryKey;
     protected static $table;
 
@@ -64,8 +65,15 @@ abstract class ModelBase {
 
     protected function PrepareUpdateQuery(\PDO $db) {
         $table = static::$table;
-        $fields = static::$dbFields;
         $keyFields = static::$primaryKey;
+        
+        $fields = static::$dbFields;
+        
+        if(static::$autoIncrement) {
+            $fields = array_filter($fields, function($field) {
+                return $field !== 'id';
+            });
+        }
 
         $query = "update $table set ";
         $fieldClause = implode(",\n", array_map(function($field) {
@@ -85,6 +93,12 @@ abstract class ModelBase {
     protected static function PrepareInsertQuery(\PDO $db) {
         $table = static::$table;
         $fields = static::$dbFields;
+
+        if(static::$autoIncrement) {
+            $fields = array_filter($fields, function($field) {
+                return $field !== 'id';
+            });
+        }
 
         $query = "insert into $table (";
         $fieldClause = implode(",", array_map(function($field) {
@@ -113,6 +127,7 @@ abstract class ModelBase {
     protected function GetFields($arr, $obj) {
         $fields = array();
         foreach($arr as $field) {
+            if(static::$autoIncrement && $field === 'id') continue;
             if(isset($obj->$field)) {
                 $value = $obj->$field;
                 if($value instanceof \DateTime) {
@@ -126,6 +141,39 @@ abstract class ModelBase {
         return $fields;
     }
 
+    public function Upsert(\PDO $db, $obj, $selectQuery=null, $insertQuery=null, $updateQuery=null) {
+        $selectQuery = ($selectQuery === null ? $this->PrepareSelectQuery($db) : $selectQuery);
+        $insertQuery = ($insertQuery === null ? $this->PrepareInsertQuery($db) : $insertQuery);
+        $updateQuery = ($updateQuery === null ? $this->PrepareUpdateQuery($db) : $updateQuery);
+
+        $constructed = $this->parseFromJson($obj);
+        Logger::info("parsed: " . print_r($constructed, true));
+        $keyFields = $this->GetFields(static::$primaryKey, $constructed);
+        $fullFields = $this->GetFields(static::$dbFields, $constructed);
+
+        if(!$selectQuery->execute($keyFields)) {
+            Logger::error("Select query failed: " . print_r($selectQuery->errorInfo(), true));
+            return;
+        }
+
+        if($selectQuery->fetchColumn()) {
+            if(!$updateQuery->execute($fullFields)) {
+                $failed++;
+                Logger::error("Update query failed: " . print_r($updateQuery->errorInfo(), true));
+                Logger::error("Row: " . print_r($fullFields, true));
+                return;
+            }
+        } else {
+            if(!$insertQuery->execute($fullFields)) {
+                $failed++;
+                Logger::error("Insert query failed: " . print_r($insertQuery->errorInfo(), true));
+                Logger::error("Row: " . print_r($fullFields, true));
+
+                return;
+            }
+        }
+    }
+
     /*
      * Generically insert or update a bunch of these models to the DB
      *
@@ -136,46 +184,8 @@ abstract class ModelBase {
         $insertQuery = $this->PrepareInsertQuery($db);
         $updateQuery = $this->PrepareUpdateQuery($db);
 
-        $inserted = 0;
-        $updated = 0;
-        $failed = 0;
-
         foreach($objs as $obj) {
-            $constructed = $this->parseFromJson($obj);
-            Logger::info("parsed: " . print_r($constructed, true));
-            $keyFields = $this->GetFields(static::$primaryKey, $constructed);
-            $fullFields = $this->GetFields(static::$dbFields, $constructed);
-
-            if(!$selectQuery->execute($keyFields)) {
-                $failed++;
-                Logger::error("Select query failed: " . print_r($selectQuery->errorInfo(), true));
-                continue;
-            }
-
-            if($selectQuery->fetchColumn()) {
-                if(!$updateQuery->execute($fullFields)) {
-                    $failed++;
-                    Logger::error("Update query failed: " . print_r($updateQuery->errorInfo(), true));
-                    Logger::error("Row: " . print_r($fullFields, true));
-                    continue;
-                }
-                $updated++;
-            } else {
-                if(!$insertQuery->execute($fullFields)) {
-                    $failed++;
-                    Logger::error("Insert query failed: " . print_r($insertQuery->errorInfo(), true));
-                    Logger::error("Row: " . print_r($fullFields, true));
-
-                    continue;
-                }
-                $inserted++;
-            }
+            $this->Upsert($db, $obj, $selectQuery, $insertQuery, $updateQuery);
         }
-
-        return array(
-            'inserted' => $inserted,
-            'updated' => $updated,
-            'failed' => $failed
-        );
     }
 }
