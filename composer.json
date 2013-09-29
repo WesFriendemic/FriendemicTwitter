@@ -3,15 +3,17 @@
     "authors": [
         {
             "name": "Wesley Curtis",
-            "email": "wesley.curtis@fayebsg.com"
+            "email": "wtcurtis@gmail.com"
         }
     ],
     "require": {
-        "abraham/twitteroauth": "dev-add-composer-json"
+        "abraham/twitteroauth": "dev-add-composer-json",
+        "twig/twig": "1.*"
     },
     "autoload": {
         "psr-0": {
             "Wes": "lib/"
-        }
+        },
+        "classmap": ["app/controllers"]
     }
 }

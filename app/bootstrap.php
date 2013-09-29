@@ -16,8 +16,12 @@ $tConf = $config['twitter'];
 
 $t = new TwitterUtil($tConf['consumer_key'], $tConf['consumer_secret'], $tConf['oauth_token'], $tConf['oauth_token_secret']);
 
-$thing = Tweet::GetByQuery('#BreakingBadMarathon');
-print_r($thing);
+$tLoader = new Twig_Loader_Filesystem(__DIR__ . '/templates');
+$twig = new Twig_Environment($tLoader);
+$GLOBALS['twig'] = $twig;
+
+/*$thing = Tweet::GetByQuery('#BreakingBadMarathon');
+print_r($thing);*/
 
 /*$query = '#BreakingBadMarathon';
 $response = $t->Search($query);
