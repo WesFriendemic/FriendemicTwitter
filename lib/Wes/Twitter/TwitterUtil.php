@@ -2,6 +2,8 @@
 
 namespace Wes\Twitter;
 
+use Wes\Logger;
+
 /*
  * An incredibly stripped down implementation of a Twitter client.
  *
@@ -38,6 +40,7 @@ class TwitterUtil {
         );
         $url = "search/tweets";
         $response = $this->twitterOauth->get($url, $params);
+        Logger::info("Response for $q: " . print_r($response, true));
         return $response;
     }
 }

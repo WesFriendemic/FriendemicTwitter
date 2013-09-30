@@ -1,6 +1,8 @@
 <?php
 namespace Wes\Stats;
 
+use Wes\Logger;
+
 /*
  * Generates histogram bins for incoming float data
  * Likely not perfect (pretty sure throwing all interval maxes into
@@ -11,8 +13,11 @@ class HistogramBins {
     protected $dataMin;
     protected $dataMax;
 
-    public function __construct($data=null) {
-        if($data !== null) $this->ProcessData($data);
+    public function __construct($data=null, $processData=true, $dataMin=null, $dataMax=null) {
+        $this->dataMin = $dataMin;
+        $this->dataMax = $dataMax;
+        $this->data = $data;
+        if($data !== null && $processData) $this->ProcessData($data);
     }
 
     public function AddDataPoint($datum) {
@@ -29,6 +34,10 @@ class HistogramBins {
 
         $curMax = null;
         $curMin = null;
+
+        if(empty($this->data)) {
+            return;
+        }
 
         foreach($this->data as $datum) {
             if($curMax === null || $curMax < $datum) {
@@ -51,8 +60,13 @@ class HistogramBins {
      */
     public function GetBins($nBins=10, $nSubBins=0) {
         if(empty($this->data)) {
-            return array();
+            $arr = array();
+            for($i = 0; $i < $nBins; $i++) {
+                $arr[] = 0;
+            }
+            return $arr;
         }
+
         $binWidth = $this->GetBinWidth($nBins);
         $interval = $this->dataMax - $this->dataMin;
 
@@ -73,6 +87,8 @@ class HistogramBins {
 
         for($i = 0; $i < count($subBinCalcs); $i++) {
             $subBinCalcs[$i]->ProcessData();
+            $subBinCalcs[$i]->dataMin = $i*$binWidth;
+            $subBinCalcs[$i]->dataMax = ($i+1)*$binWidth;
             $subBins[] = $subBinCalcs[$i]->GetBins($nSubBins);
         }
 
@@ -88,6 +104,8 @@ class HistogramBins {
     protected function GetBinWidth($nBins) {
         $interval = $this->dataMax - $this->dataMin;
         $binWidth = $interval / $nBins;
+
+        if($binWidth == 0) return 1;
         return $binWidth;
     }
 

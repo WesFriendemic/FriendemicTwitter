@@ -1,5 +1,14 @@
 {% extends 'layout.twig' %}
 
 {% block content %}
-Content goes here.
+<form method="GET" action="index.php?controller=Home&action=search" id="search_form">
+    <div class="input-group">
+        <input class="form-control" name="query" id="query" type="text" value="{{ activeQuery }}">
+        <span class="input-group-btn">
+            <input class="btn btn-primary" type="submit" value="Search Twitter!">
+        </span>
+    </div>
+</form>
+<div id="content">
+</div>
 {% endblock %}

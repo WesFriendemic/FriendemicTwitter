@@ -22,5 +22,8 @@ class TweetParser extends ParserBase {
         'user_profile_image_url' => array(
             'field' => array('user', 'profile_image_url')
         ),
+        'user_screen_name' => array(
+            'field' => array('user', 'screen_name')
+        ),
     );
 }

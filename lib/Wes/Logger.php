@@ -10,7 +10,7 @@ class Logger {
 
     protected static $LogWriter;
 
-    protected static $level = self::ERROR;
+    protected static $level = self::INFO;
 
     public static function SetLevel($level) {
         self::$level = $level;
@@ -47,7 +47,7 @@ class Logger {
     public static function log($message, $level = self::FATAL) {
         if($level <= self::$level) {
             if(!self::$LogWriter) {
-                self::$LogWriter = new EchoWriter();
+                self::$LogWriter = new ErrorLogWriter();
             }
 
             self::$LogWriter->write($message);
@@ -63,6 +63,13 @@ class EchoWriter implements LogWriter {
     public function write($message) {
         echo $message . "\n";
     }
+}
+
+class PreWriter implements LogWriter {
+    public function write($message) {
+        echo "<pre>" . $message . "</pre>";
+    }
+
 }
 
 class ErrorLogWriter implements LogWriter {

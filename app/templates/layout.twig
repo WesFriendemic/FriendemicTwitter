@@ -1,13 +1,91 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="static/css/vendor/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="static/css/main.css">
-        <title>{{ title }}</title>
-    </head>
+<head lang="en">
+    <link rel="stylesheet" type="text/css" href="static/css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/main.css">
+    <title>{{ title }}</title>
+</head>
 <body>
-    <div id="content">{% block content %}{% endblock %}</div>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Friendemic Twitter</a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="#">Home</a>
+                    </li>
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+      <div class="row row-offcanvas row-offcanvas-right">
+        <div class="col-xs-12 col-sm-7">
+          <p class="pull-right visible-xs">
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+          </p>
+          <div class="row">
+            {% block content %}{% endblock %}
+          </div><!--/row-->
+        </div><!--/span-->
+        {% include 'widgets/sidebar.twig' with { queries: queries, activeQuery: activeQuery } %}
+      </div><!--/row-->
+    </div>
     <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="static/js/vendor/underscore-min.js"></script>
     <script type="text/javascript" src="static/js/vendor/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/vendor/highcharts.js"></script>
+    <script type="text/javascript" src="static/js/relativeDate.js"></script>
+    <script type="text/javascript" src="static/js/tweetChart.js"></script>
+    <script type="text/javascript" src="static/js/tweets.js"></script>
+    <script type="text/template" id="tweetTemplate">
+    <div class="tweet">
+        <div class="row">
+            <div class="col-xs-2 pull-left"><img class="profile_image" src="<%= tweet.user_profile_image_url %>"></img></div>
+            <div class="col-xs-10">
+                <div class="row">
+                    <div class="col-xs-8"><span class="user_name"><%- tweet.user_name %></span><span class="screen_name">@<%- tweet.user_screen_name %></span></div>
+                    <div class="col-xs-2 pull-right"><%- relativeFormat(tweet.created_at) %></div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <%- tweet.text %>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a target="_blank" href="http://twitter.com/<%= tweet.user_screen_name %>/statuses/<%= tweet.id %>">
+                            View on Twitter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </script>
+
+    <script type="text/template" id="queryTemplate">
+        <ul class="nav">
+            <li><strong>Previous Queries</strong></li>
+            <% _.each(queries, function(query) { %>
+                <li<% if(activeQuery == query.query) { %> class="active"<% } %> >
+                    <a class="query-link" data-query="<%= query.query %>" href="#"><%= query.query %></a>
+                </li>
+            <% }); %>
+        </ul>
+    </script>
+    <script type="text/template" id="loadingTemplate">
+        <div class="loading"></div>
+    </script>
 </body>
 </html>

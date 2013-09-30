@@ -3,6 +3,7 @@
 namespace Wes\Model;
 
 use Wes\Logger;
+use Wes\Config\Config;
 
 /*
  * This uses some moderate abuses of dynamic object fields (like $thing->{$some_string}),
@@ -29,7 +30,9 @@ abstract class ParserBase {
 
     protected static function ParseDateTime($value) {
         try {
-            return new \DateTime($value);
+            $dt = new \DateTime($value);
+            $dt->setTimezone(Config::GetDefaultTimezone());
+            return $dt;
         } catch(\Exception $ex) {
             Logger::fatal($ex->getMessage());
             return null;
@@ -85,7 +88,6 @@ abstract class ParserBase {
     }
 
     public static function ParseFromJsonObj($json, $seed) {
-        Logger::error("incoming object: " . print_r($seed, true));
         foreach(static::$parseFields as $key => $value) {
             // Integer key means simple array element
             if(is_int($key)) {
@@ -96,7 +98,6 @@ abstract class ParserBase {
             $fieldName = $key;
 
             if(is_string($value)) {
-                Logger::info("getting $value out of json");
                 $seed->$fieldName = self::GetValue($json, $value);
                 continue;
             }

@@ -3,6 +3,8 @@ namespace Wes\Twitter;
 
 use Wes\Model\ModelBase;
 use Wes\Db\Db;
+use Wes\Logger;
+use Wes\Stats\HistogramBins;
 
 class Tweet extends ModelBase {
     public $text;
@@ -16,6 +18,7 @@ class Tweet extends ModelBase {
     public $user_id;
     public $user_name;
     public $user_profile_image_url;
+    public $user_screen_name;
 
     protected $parserClass = "Wes\Twitter\TweetParser";
 
@@ -30,6 +33,7 @@ class Tweet extends ModelBase {
         'user_id',
         'user_name',
         'user_profile_image_url',
+        'user_screen_name',
     );
 
     protected static $primaryKey = array('id');
@@ -40,15 +44,22 @@ class Tweet extends ModelBase {
         return $obj;
     }
 
-    public static function GetByQuery($query) {
+    public static function GetByQuery($query, $limit=100, $offset=0) {
         $db = Db::GetInstance();
         $queryString =
             "select t.*, tq.query from tweets t inner join tweets_queries tq on " .
             "t.id = tq.tweet_id " .
-            "where tq.query = :query";
+            "where tq.query = :query " .
+            "order by t.created_at desc ";
+
+        if($limit !== 0) {
+            $limit = (int)$limit;
+            $offset = (int)$offset;
+            $queryString .= " LIMIT $offset, $limit";
+        }
 
         $stmt = $db->prepare($queryString);
-        echo "executing query $queryString with query $query\n";
+        Logger::info("executing query $queryString with query $query");
         if(!$stmt->execute(array('query' => $query))) {
             Logger::fatal("Error while executing select: " . print_r($stmt->errorInfo(), true));
             return array();
@@ -57,10 +68,27 @@ class Tweet extends ModelBase {
         $objs = array();
 
         while($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            echo "got a row\n";
             $objs[] = static::ParseFromRow($row);
         }
 
         return $objs;
+    }
+
+    public static function GetTweetDistribution($tweets) {
+        $timesOfDay = array();
+
+        foreach($tweets as $tweet) {
+            $dt = new \DateTime($tweet->created_at);
+            $h = $dt->format('G');
+            $m = $dt->format('i');
+
+            $totalMinutes = $h*60+$m;
+
+            Logger::info('given ' . $dt->format('Y-m-d H:i:s') . ', we got ' . $totalMinutes);
+            $timesOfDay[] = $totalMinutes;
+        }
+
+        $histo = new HistogramBins($timesOfDay, false, 0, 24*60);
+        return $histo->GetBins(24, 6);
     }
 }

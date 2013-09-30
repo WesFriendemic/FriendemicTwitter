@@ -48,7 +48,8 @@ abstract class ModelBase {
     /*
      * Used to distinguish between an update and an insert
      */
-    protected function PrepareSelectQuery(\PDO $db, $allFields=false) {
+    protected function PrepareSelectQuery(\PDO $db, $allFields=false, $whereFields=null, $limit=0, $offset=0) {
+        if($whereFields === null) $whereFields = static::$primaryKey;
         $table = static::$table;
 
         $fieldClause = implode(",", array_map(function($field) {
@@ -57,9 +58,21 @@ abstract class ModelBase {
 
         $whereClause = implode(" and ", array_map(function($field) {
             return "`$field` = :$field";
-        }, static::$primaryKey));
+        }, $whereFields));
 
-        $query = "select $fieldClause from $table where $whereClause";
+        if($limit !== 0) {
+            $limit = (int)$limit;
+            $offset = (int)$offset;
+
+            $limitClause = " LIMIT $offset,$limit";
+        } else $limitClause = '';
+
+        $query = "select $fieldClause from $table";
+        if(!empty($whereClause)) {
+            $query .= " where $whereClause ";
+        }
+        $query .= $limitClause;
+
         Logger::debug("Prepared this select: $query\n");
         return $db->prepare($query);
     }
@@ -67,9 +80,9 @@ abstract class ModelBase {
     protected function PrepareUpdateQuery(\PDO $db) {
         $table = static::$table;
         $keyFields = static::$primaryKey;
-        
+
         $fields = static::$dbFields;
-        
+
         if(static::$autoIncrement) {
             $fields = array_filter($fields, function($field) {
                 return $field !== 'id';
@@ -86,7 +99,7 @@ abstract class ModelBase {
         }, $keyFields));
 
         $whereClause = " where " . $whereClause;
-        echo ("prepared update query with fields " . print_r($fields, true));
+        Logger::info("prepared update query with fields " . print_r($fields, true));
 
         return $db->prepare($query . $fieldClause . $whereClause);
     }
@@ -132,7 +145,6 @@ abstract class ModelBase {
             if(isset($obj->$field)) {
                 $value = $obj->$field;
                 if($value instanceof \DateTime) {
-                    $value->setTimezone(new \DateTimeZone("UTC"));
                     $value = $value->format('Y-m-d H:i:s');
                 }
             } else $value = '';
@@ -148,7 +160,6 @@ abstract class ModelBase {
         $updateQuery = ($updateQuery === null ? $this->PrepareUpdateQuery($db) : $updateQuery);
 
         $constructed = $this->parseFromJson($obj);
-        Logger::info("parsed: " . print_r($constructed, true));
         $keyFields = $this->GetFields(static::$primaryKey, $constructed);
         $fullFields = $this->GetFields(static::$dbFields, $constructed);
 
@@ -211,5 +222,20 @@ abstract class ModelBase {
         if(empty($row)) return null;
 
         return static::ParseFromRow($row);
+    }
+
+    public static function GetBy($params, $limit=10, $offset=0) {
+        $db = Db::GetInstance();
+        $fields = array_keys($params);
+        $selectQuery = static::PrepareSelectQuery($db, true, $fields, $limit, $offset);
+
+        $selectQuery->execute($params);
+
+        $objs = array();
+        while($row = $selectQuery->fetch(\PDO::FETCH_ASSOC)) {
+            $objs[] = static::ParseFromRow($row);
+        }
+
+        return $objs;
     }
 }
