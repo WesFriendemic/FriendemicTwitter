@@ -11,18 +11,10 @@ use Wes\Logger;
  * result_type parameters.
  */
 class TwitterUtil {
-    /*protected $consumerKey;
-    protected $consumerSecret;
-    protected $oauthToken;
-    protected $oauthSecret;*/
 
     protected $twitterOauth;
 
     public function __construct($consumerKey, $consumerSecret, $oauthToken, $oauthSecret) {
-        $this->consumerKey = $consumerKey;
-        $this->consumerSecret = $consumerSecret;
-        $this->oauthToken = $oauthToken;
-        $this->oauthSecret = $oauthSecret;
         $this->twitterOauth = new \TwitterOauth(
             $consumerKey,
             $consumerSecret,

@@ -21,7 +21,7 @@ abstract class ParserBase {
      * parsed JSON object
      *
      * Sub array:
-     *  'type': 'string', 'int', 'datetime'
+     *  'type': 'string', 'int', 'datetime', 'virtual'
      *  'field':
      *      Simple string: pull the field with that name into the object field named after the key
      *      Array: descend according to the array; e.g., array('user', 'id_str')
@@ -111,5 +111,4 @@ abstract class ParserBase {
         }
         return $seed;
     }
-
 }
