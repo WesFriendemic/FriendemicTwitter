@@ -5,6 +5,7 @@
     var categories = _.map(_.range(25), function(i) {
         var ampm = i >= 12 ? 'PM' : 'AM';
         i = i > 12 ? i-12 : i;
+        if(i == 0) i = 12;
 
         var subCat = _.map(_.range(0, 60, 10), function(min) {
             var low = min;
