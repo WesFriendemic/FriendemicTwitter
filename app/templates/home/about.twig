@@ -4,7 +4,6 @@
 <p>Here are some thoughts on how this thing works.
 <p>Although some of the backend components are perhaps a bit more general than is necessary, I had some reasoning behind it. I tried to approach this project as I would any other internal tool, which would require extension and modification over time.
 <p>So, I designed this with that in mind. In a real setting, I'd have likely used an existing web framework, rather than building up the tiny little not-really-a-framework thing I've built here. But that would have been even more overkill than the current thing is.
-<p>In all likelihood, this will be pretty slow. Given that we're never inserting or removing more than 100 tweets at once, that's not really a big deal. But the first likely place performance issues would crop up would be in the database access. Though I'm retrieving up to 100 tweets at a time, each one requries at least two round trips to the DB.
 {% endblock %}
 
 {% block sidebar %}{% endblock %}
