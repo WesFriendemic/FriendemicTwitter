@@ -1,6 +1,10 @@
 {% extends 'layout.twig' %}
 
 {% block content %}
+<div class="jumbotron" id="greeting">
+    <p>Hello there! You can search Twitter here. Type something in, and we'll see what Twitter has to say about it.</p>
+    <p>You can also see what other people are searching for in the sidebar. Click one of those to perform that search again!</p>
+</div>
 <form method="GET" action="index.php?controller=Home&action=search" id="search_form">
     <div class="input-group">
         <input class="form-control" name="query" id="query" type="text" value="{{ activeQuery }}">
@@ -11,4 +15,7 @@
 </form>
 <div id="content">
 </div>
+{% endblock %}
+{% block sidebar %}
+{% include 'widgets/sidebar.twig' with { queries: queries, activeQuery: activeQuery } %}
 {% endblock %}

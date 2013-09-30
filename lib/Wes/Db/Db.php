@@ -12,11 +12,12 @@ class Db {
 
         try {
             $db = new \PDO(self::getDsn($dbName, $dbHost), $dbUser, $dbPass, array(
-                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"));
             self::$db = $db;
             return $db;
         } catch(\PDOException $ex) {
             Logger::fatal("Error while connecting to database: " . $ex->getMessage());
+            die("Couldn't connect to the database.");
         }
     }
 

@@ -28,6 +28,10 @@ class HistogramBins {
     /*
      * Really just used for getting the min and max, but a good spot to throw
      * any preprocessing.
+     *
+     * Which, it turns out, isn't even really used anymore, considering I have
+     * to pass my own arbitrary min and max in. Oh well, now it does both
+     * defined and calculated data ranges.
      */
     public function ProcessData($data=null) {
         if($data !== null) $this->data = $data;

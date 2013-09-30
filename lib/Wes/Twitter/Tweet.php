@@ -92,7 +92,6 @@ class Tweet extends ModelBase {
 
             $totalMinutes = $h*60+$m;
 
-            Logger::info('given ' . $dt->format('Y-m-d H:i:s') . ', we got ' . $totalMinutes);
             $timesOfDay[] = $totalMinutes;
         }
 

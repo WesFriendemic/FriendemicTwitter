@@ -72,7 +72,6 @@ abstract class ParserBase {
            if(is_array($spec['field'])) {
                $resolvedVal = static::ResolveDescent($obj, $spec['field']);
            } else {
-               //echo "spec: " . print_r($spec, true) . "\n";
                $resolvedVal = self::GetValue($obj, $spec['field']);
            }
         }

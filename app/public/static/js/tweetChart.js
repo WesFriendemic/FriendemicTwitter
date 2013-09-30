@@ -1,14 +1,20 @@
 ;(function(root) {
     var colors = Highcharts.getOptions().colors;
+    var subCats = [];
+
     var categories = _.map(_.range(25), function(i) {
         var ampm = i >= 12 ? 'PM' : 'AM';
         i = i > 12 ? i-12 : i;
 
-        return '' + i + ' ' + ampm;
-    });
+        var subCat = _.map(_.range(0, 60, 10), function(min) {
+            var low = min;
+            var high = i+9;
+            var minute = min == 0 ? '00' : ''+min;
+            return '' + i + ':' + minute;
+        });
+        subCats.push(subCat);
 
-    var subCats = _.map(_.range(0, 60, 10), function(i) {
-        return '' + i;
+        return '' + i + ' ' + ampm;
     });
 
     var data;
@@ -22,7 +28,7 @@
                 color: colors[i%2],
                 drilldown: {
                     name: categories[i],
-                    categories: subCats,
+                    categories: subCats[i],
                     data: subBins[i],
                     color: colors[i%2]
                 }

@@ -23,10 +23,10 @@ DROP TABLE IF EXISTS `queries`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `queries` (
-  `query` varchar(255) NOT NULL DEFAULT '',
+  `query` varchar(100) NOT NULL DEFAULT '',
   `date_queried` datetime DEFAULT NULL,
   PRIMARY KEY (`query`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,7 +49,7 @@ CREATE TABLE `tweets` (
   PRIMARY KEY (`id`),
   KEY `tweets_user_idx` (`user_id`),
   KEY `tweets_created_idx` (`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,9 +61,9 @@ DROP TABLE IF EXISTS `tweets_queries`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tweets_queries` (
   `tweet_id` varchar(30) NOT NULL DEFAULT '',
-  `query` varchar(255) NOT NULL DEFAULT '',
+  `query` varchar(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`tweet_id`,`query`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

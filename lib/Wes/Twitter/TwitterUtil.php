@@ -41,7 +41,10 @@ class TwitterUtil {
         );
         $url = "search/tweets";
         $response = $this->twitterOauth->get($url, $params);
-        Logger::info("Response for $q: " . print_r($response, true));
+        if(!isset($response->statuses)) {
+            Logger::fatal("Error while talking to Twitter: " . print_r($response, true));
+            return null;
+        }
         return $response;
     }
 }

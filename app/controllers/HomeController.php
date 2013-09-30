@@ -1,12 +1,6 @@
 <?php
 
-use Wes\Twitter\TweetQueryTweet;
-use Wes\Twitter\TweetSearch;
 use Wes\Twitter\TweetQuery;
-use Wes\Twitter\Tweet;
-use Wes\Twitter\TwitterUtil;
-use Wes\Config\Config;
-use Wes\Db\Db;
 use Wes\Logger;
 
 class HomeController {
@@ -14,7 +8,7 @@ class HomeController {
 
     public function index() {
         global $twig;
-        $this->title = "Home";
+        $this->title = "Tweet Search";
 
         echo $twig->render('home/home.twig', $this->GetViewObj());
     }
@@ -32,15 +26,9 @@ class HomeController {
         return array_merge($default, $additional);
     }
 
-    public function run_query() {
-        Logger::SetWriter(new Wes\PreWriter());
-        if(!isset($_REQUEST['query'])) {
-            die('no query');
-        }
-
-        $query = $_REQUEST['query'];
-
-        $ts = new TweetSearch();
-        $ts->RunSearch($query, true);
+    public function about() {
+        global $twig;
+        $this->title = "About";
+        echo $twig->render('home/about.twig', $this->GetViewObj());
     }
 }

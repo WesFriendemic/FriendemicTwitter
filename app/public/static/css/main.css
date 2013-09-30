@@ -43,6 +43,11 @@ body {
     height: 50px;
 }
 
+.hide-right {
+    position: fixed;
+    right: -100%;
+}
+
 @media screen and (max-width: 768px) {
   .row-offcanvas {
     position: relative;

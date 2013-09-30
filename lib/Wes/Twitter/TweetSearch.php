@@ -26,6 +26,9 @@ class TweetSearch {
             $tConf['oauth_token'], $tConf['oauth_token_secret']);
 
         $response = $t->Search($query);
+        if(!$response) {
+            return false;
+        }
         $db = Db::GetInstance();
 
         $insertObj = new Tweet();
