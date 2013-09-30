@@ -35,6 +35,8 @@ body {
 
 .profile_image {
     padding: 5px;
+    width: 53px;
+    height: 53px;
 }
 
 .loading {
