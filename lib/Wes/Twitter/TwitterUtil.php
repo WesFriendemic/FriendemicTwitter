@@ -23,12 +23,13 @@ class TwitterUtil {
         $this->consumerSecret = $consumerSecret;
         $this->oauthToken = $oauthToken;
         $this->oauthSecret = $oauthSecret;
-        $this->twitterOauth = (new \TwitterOauth(
+        $this->twitterOauth = new \TwitterOauth(
             $consumerKey,
             $consumerSecret,
             $oauthToken,
             $oauthSecret
-        ))->useAPIVersion("1.1");
+        );
+        $this->twitterOauth->useAPIVersion("1.1");
 
     }
 
