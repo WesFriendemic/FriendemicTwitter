@@ -14,7 +14,6 @@ class TweetQuery extends ModelBase {
         'date_queried'
     );
 
-    protected static $autoIncrement = true;
     protected static $primaryKey = array('query');
 
     public function __construct($query=null, $date_queried=null) {

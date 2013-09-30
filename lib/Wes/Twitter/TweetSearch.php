@@ -11,6 +11,15 @@ use Wes\Db\Db;
 use Wes\Logger;
 
 class TweetSearch {
+    /*
+     * Run a query on Twitter. Inserts the retrived tweets into the database.
+     *
+     * @param string query Query to run on Twitter
+     * @param bool debounce Whether we should limit identical queries, based on the 
+     *  min_query_interval configuration parameter
+     *
+     * @return bool True on success, false on failure
+     */
     public function RunSearch($query, $debounce=true) {
         $now = new \DateTime();
 
@@ -43,6 +52,10 @@ class TweetSearch {
         return true;
     }
 
+    /*
+     * Basically, we only run a search if it's been greater than min_query_interval
+     * seconds since the last time this query was searched, or if this is a new query.
+     */
     protected function ShouldFire($query) {
         $config = Config::GetConfig();
         $minIntervalSeconds = $config['twitter']['min_query_interval'];

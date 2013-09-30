@@ -1,6 +1,10 @@
 <?php
 namespace Wes;
 
+/*
+ * Super simple log wrapper. Doesn't do anything fancy, just lets you
+ * pass in arbitrary writers, and implements some rudimentary log levels.
+ */
 class Logger {
     const FATAL = 0;
     const ERROR = 1;
@@ -10,7 +14,7 @@ class Logger {
 
     protected static $LogWriter;
 
-    protected static $level = self::INFO;
+    protected static $level = self::FATAL;
 
     public static function SetLevel($level) {
         self::$level = $level;

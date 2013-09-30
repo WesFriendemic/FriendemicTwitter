@@ -1,4 +1,7 @@
 ;(function(root) {
+    /*
+     * Relative datetime formatting like on twitter, because why not?
+     */
     var offsetMillis = (new Date()).getTimezoneOffset()*60*1000;
     var parseDate = function(date) {
         var timestamp;

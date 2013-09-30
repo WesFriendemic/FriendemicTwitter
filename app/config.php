@@ -15,5 +15,8 @@ return array(
         'pass' => '',
         'name' => '',
     ),
+    'twig' => array(
+        'template_directory' => __DIR__ . '/templates'
+    )
 );
 

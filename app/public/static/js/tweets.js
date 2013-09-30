@@ -24,6 +24,10 @@
         });
     };
 
+    /*
+     * Perform a tweet search. Also redraws the chart, and (somewhat)
+     * gracefully handles errors
+     */
     var performSearch = function(query, cb, ctx) {
         var url = 'index.php';
         var params = {
@@ -43,7 +47,6 @@
                 $('#content').html(templates.searchError());
                 return;
             }
-
 
             $('.graph-sidebar').removeClass('hide-right');
             TweetChart.setData(data.distribution.bins, data.distribution.subBins);
@@ -111,17 +114,23 @@
         initTemplates();
         attachEvents();
 
-        // This is just ... a hideous, ridiculous hack. Can't display:none the graph
-        // when we shouldn't display it, because Highcharts calculates the width
-        // of the chart based on the parent element.
-        //
-        // We want it the same width as the sidebar, so ... here, we literally
-        // do that.
-        //
-        //If I didn't need to finish this today, I'd make this less hideous.
+        /*
+         * This is just ... a hideous, ridiculous hack. Can't display:none the graph
+         * when we shouldn't display it, because Highcharts calculates the width
+         * of the chart based on the parent element.
+         *
+         * We want it the same width as the sidebar, so ... here, we literally
+         * do that.
+         *
+         * If I didn't need to finish this today, I'd make this less hideous.
+         */
         $('.graph-sidebar').css('width', $('#query_sidebar').css('width'));
 
         window.TweetChart.initChart('#graph-container');
+
+        /*
+         * offcanvas toggling
+         */
         $('[data-toggle=offcanvas]').click(function() {
             $('.row-offcanvas').toggleClass('active');
         });

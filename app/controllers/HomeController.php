@@ -15,10 +15,9 @@ class HomeController {
 
     protected function GetViewObj($additional=array()) {
         $query = isset($_REQUEST['query']) ? $_REQUEST['query'] : null;
-        $queries = TweetQuery::GetBy(array());
 
         $default = array(
-            'queries' => TweetQuery::GetBy(array()),
+            'queries' => TweetQuery::GetBy(array(), 50),
             'activeQuery' => isset($_REQUEST['query']) ? urldecode($_REQUEST['query']) : '',
             'title' => $this->title
         );

@@ -2,6 +2,10 @@
     var colors = Highcharts.getOptions().colors;
     var subCats = [];
 
+    /*
+     * This got a little involved. Just making categories for times
+     * between 12 AM and 12 PM, and sub categories in ten minute intervals.
+     */
     var categories = _.map(_.range(25), function(i) {
         var ampm = i >= 12 ? 'PM' : 'AM';
         i = i > 12 ? i-12 : i;
@@ -22,6 +26,10 @@
     var chart;
     var name = "Tweets";
 
+    /*
+     * Transform the incoming bins and subBins into the format expected by
+     * Highcharts
+     */
     var setData = function(bins, subBins) {
         data = _.map(bins, function(datum, i) {
             return {
@@ -38,7 +46,9 @@
         setChart(name, categories, data);
     };
 
-
+    /*
+     * Draw / redraw the chart
+     */
     var setChart = function(name, categories, data, color) {
         chart.xAxis[0].setCategories(categories, false);
         chart.series[0].remove(false);

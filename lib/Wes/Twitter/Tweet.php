@@ -38,12 +38,6 @@ class Tweet extends ModelBase {
 
     protected static $primaryKey = array('id');
 
-    public static function ParseFromJsonObj($json, $seed) {
-        $obj = parent::ParseFromJsonObj($json, $seed);
-        $obj->query = $this->query;
-        return $obj;
-    }
-
     public static function GetByQuery($query, $limit=100, $offset=0) {
         $db = Db::GetInstance();
         $queryString =

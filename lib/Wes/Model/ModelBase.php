@@ -25,7 +25,6 @@ abstract class ModelBase {
      * Woo hoo for late static binding!
      */
     protected static $dbFields;
-    protected static $autoIncrement = false;
     protected static $primaryKey;
     protected static $table;
 
@@ -84,12 +83,6 @@ abstract class ModelBase {
 
         $fields = static::$dbFields;
 
-        if(static::$autoIncrement) {
-            $fields = array_filter($fields, function($field) {
-                return $field !== 'id';
-            });
-        }
-
         $query = "update $table set ";
         $fieldClause = implode(",\n", array_map(function($field) {
             return "`$field` = :$field";
@@ -108,12 +101,6 @@ abstract class ModelBase {
     protected static function PrepareInsertQuery(\PDO $db) {
         $table = static::$table;
         $fields = static::$dbFields;
-
-        if(static::$autoIncrement) {
-            $fields = array_filter($fields, function($field) {
-                return $field !== 'id';
-            });
-        }
 
         $query = "insert into $table (";
         $fieldClause = implode(",", array_map(function($field) {
@@ -142,7 +129,6 @@ abstract class ModelBase {
     protected function GetFields($arr, $obj) {
         $fields = array();
         foreach($arr as $field) {
-            if(static::$autoIncrement && $field === 'id') continue;
             if(isset($obj->$field)) {
                 $value = $obj->$field;
                 if($value instanceof \DateTime) {

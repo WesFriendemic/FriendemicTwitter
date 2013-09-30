@@ -24,7 +24,7 @@ class ApiController {
         $dbQuery = TweetQuery::Get(array('query' => $query));
 
         $ts = new TweetSearch();
-        $result = $ts->RunSearch($query, false);
+        $result = $ts->RunSearch($query);
 
         $tweets = Tweet::GetByQuery($_REQUEST['query']);
         $this->SendJson(array(
@@ -35,7 +35,7 @@ class ApiController {
     }
 
     public function GetQueries() {
-        $queries = TweetQuery::GetBy(array());
+        $queries = TweetQuery::GetBy(array(), 50);
 
         $this->SendJson(array(
             'queries' => $queries

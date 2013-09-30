@@ -11,6 +11,10 @@ use Wes\Config\Config;
  * json_decode, so it gives us a StdObject instead of a more rational associative
  * array. I'd rather not change it in the library, to make deployment simpler
  * (and to avoid forking it), so that's what we get.
+ *
+ * NOTE:
+ * Okay, well, actually, I could just tell the library not to parse the json, and let
+ * me do it myself. Oh well, too late now.
  */
 abstract class ParserBase {
     /* Simple string: just pull the field with that name out of the root of the
