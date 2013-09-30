@@ -22,7 +22,7 @@ class Config {
         if(!self::$tz) {
             self::$tz = new \DateTimeZone(date_default_timezone_get());
         }
-        
+
         return self::$tz;
     }
 }

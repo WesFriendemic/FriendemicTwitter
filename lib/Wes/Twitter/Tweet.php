@@ -74,11 +74,19 @@ class Tweet extends ModelBase {
         return $objs;
     }
 
-    public static function GetTweetDistribution($tweets) {
+    public static function GetTweetDistribution($tweets, $tzOffset) {
         $timesOfDay = array();
 
         foreach($tweets as $tweet) {
             $dt = new \DateTime($tweet->created_at);
+            $interval = new \DateInterval('PT' . abs($tzOffset) . 'H');
+
+            if($tzOffset >= 0) {
+                $dt->add($interval);
+            } else {
+                $dt->sub($interval);
+            }
+
             $h = $dt->format('G');
             $m = $dt->format('i');
 

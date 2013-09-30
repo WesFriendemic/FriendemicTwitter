@@ -29,7 +29,8 @@
         var params = {
             controller: 'Api',
             action: 'GetTweets',
-            query: query
+            query: query,
+            tz_offset: (new Date()).getTimezoneOffset()/60
         };
 
         $('#content').html(templates.loadingTemplate());
@@ -98,8 +99,6 @@
             });
         });
     };
-
-
 
     var onLoad = function() {
         initTemplates();

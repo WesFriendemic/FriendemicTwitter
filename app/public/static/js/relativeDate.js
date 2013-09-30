@@ -1,4 +1,5 @@
 ;(function(root) {
+    var offsetMillis = (new Date()).getTimezoneOffset()*60*1000;
     var parseDate = function(date) {
         var timestamp;
 
@@ -9,6 +10,7 @@
             if(isNaN(timestamp)) return null;
 
             date = new Date(timestamp);
+            date = new Date(date.getTime() - offsetMillis);
         }
 
         return date;

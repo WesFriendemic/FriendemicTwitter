@@ -12,7 +12,15 @@ class ApiController {
                 'error' => 'Missing required query'
             ));
         }
+
+        if(empty($_REQUEST['tz_offset'])) {
+            $this->SendJson(array(
+                'error' => "Missing required tz_offset"
+            ));
+        }
         $query = $_REQUEST['query'];
+        $tzOffset = -1*$_REQUEST['tz_offset'];
+
         $dbQuery = TweetQuery::Get(array('query' => $query));
 
         $ts = new TweetSearch();
@@ -22,7 +30,7 @@ class ApiController {
         $this->SendJson(array(
             'query' => $query,
             'tweets' => $tweets,
-            'distribution' => Tweet::GetTweetDistribution($tweets)
+            'distribution' => Tweet::GetTweetDistribution($tweets, $tzOffset)
         ));
     }
 

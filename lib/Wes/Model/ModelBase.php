@@ -4,6 +4,7 @@ namespace Wes\Model;
 
 use Wes\Logger;
 use Wes\Db\Db;
+use Wes\Config\Config;
 
 /*
  * Almost like an ultra simplified ORM base class. Generates inserts, updates, selects from
@@ -145,6 +146,7 @@ abstract class ModelBase {
             if(isset($obj->$field)) {
                 $value = $obj->$field;
                 if($value instanceof \DateTime) {
+                    $value->setTimezone(Config::GetDefaultTimezone());
                     $value = $value->format('Y-m-d H:i:s');
                 }
             } else $value = '';
