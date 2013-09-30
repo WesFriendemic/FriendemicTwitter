@@ -41,7 +41,13 @@
         $('.graph-sidebar').addClass('hide-right');
         $('#greeting').remove();
 
-        $.getJSON(url, params, function(data) {
+        $.post(url, params, function(data) {
+            try {
+                data = $.parseJSON(data);
+            } catch(e) {
+                data = {error: "Couldn't parse the incoming JSON"};
+            }
+
             if(data.error) {
                 console.log(data.error);
                 $('#content').html(templates.searchError());
