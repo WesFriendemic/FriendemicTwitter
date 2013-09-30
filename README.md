@@ -5,7 +5,7 @@ Should be simple.
 * Do a `composer update`.
 * Create the database. This is kinda annoying: Twitter tends to have 4-byte UTF-8 characters, so you have to do something like:
 
-    `create database some_database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
+    `mysql> create database some_database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
 
     Then, just:
 
