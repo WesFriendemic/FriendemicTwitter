@@ -70,10 +70,15 @@ class Tweet extends ModelBase {
 
     public static function GetTweetDistribution($tweets, $tzOffset) {
         $timesOfDay = array();
+        $interval = new \DateInterval('PT' . abs($tzOffset) . 'H');
 
         foreach($tweets as $tweet) {
-            $dt = new \DateTime($tweet->created_at);
-            $interval = new \DateInterval('PT' . abs($tzOffset) . 'H');
+            try {
+                $dt = new \DateTime($tweet->created_at);
+            } catch(\Exception $ex) {
+                Logger::fatal("Couldn't parse the tweet's created_at: {$tweet->created_at}");
+                continue;
+            }
 
             if($tzOffset >= 0) {
                 $dt->add($interval);
