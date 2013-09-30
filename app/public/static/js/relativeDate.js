@@ -10,7 +10,10 @@
 
         if(!(date instanceof Date)) {
             timestamp = Date.parse(date);
-            if(isNaN(timestamp)) return null;
+            if(isNaN(timestamp)) {
+                timestamp = Date.parse(date.replace(/ /, 'T'));
+                if(isNaN(timestamp)) return null;
+            }
 
             date = new Date(timestamp);
             date = new Date(date.getTime() - offsetMillis);
