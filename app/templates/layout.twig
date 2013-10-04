@@ -82,7 +82,7 @@
             <li><strong>Previous Queries</strong></li>
             <% _.each(queries, function(query) { %>
                 <li<% if(activeQuery == query.query) { %> class="active"<% } %> >
-                    <a class="query-link" data-query="<%= query.query %>" href="#"><%= query.query %></a>
+                    <a class="query-link" data-query="<%- query.query %>" href="#"><%- query.query %></a>
                 </li>
             <% }); %>
         </ul>
